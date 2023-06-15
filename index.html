@@ -2,24 +2,35 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Websynth</title>
   </head>
   <body>
     <div id="app">
       <div class="settings">
-        <input type="range" id="attack" name="attack" min="0" max="2" />
         <label for="attack">Attack</label>
+        <input type="range" id="attack" name="attack" min="0" max="2" step="0.01"/>
   
-        <input type="range" id="decay" name="decay" min="0.001" max="2" />
         <label for="decay">Decay</label>
+        <input type="range" id="decay" name="decay" min="0.01" max="2" step="0.01"/>
   
-        <input type="range" id="sustain" name="sustain" min="0" max="1" />
         <label for="sustain">Sustain</label>
+        <input type="range" id="sustain" name="sustain" min="0" max="1" step="0.01"/>
   
-        <input type="range" id="release" name="release" min="0.001" max="5" />
         <label for="release">Release</label>
+        <input type="range" id="release" name="release" min="0.01" max="5" step="0.01"/>
+
+        <label for="waveform-picker">Waveform</label>
+        <select name="waveform-picker" id="waveform-picker">
+          <option value="sine">Sine</option>
+          <option value="square">Square</option>
+          <option value="sawtooth">Sawtooth</option>
+          <option value="triangle">Triangle</option>
+        </select>
+
+        <button id="play">Play</button>
+
     </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
