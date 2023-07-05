@@ -7,7 +7,7 @@ let osc: Tone.Oscillator;
 function setup() {
   env = new Tone.AmplitudeEnvelope({
     attack: 0.1,
-    attackCurve: "exponential",
+    attackCurve: "linear",
     decay: 0.2,
     sustain: 1.0,
     release: 0.8,
@@ -31,16 +31,16 @@ function setup() {
     osc.type = e.target!.value;
   });
 
-  const envSliders = document.querySelectorAll(".settings > input[type=range]");
+  const envSliders = document.querySelectorAll(".envelope > input[type=range]");
   envSliders.forEach((slider) => {
     slider.addEventListener("input", (e) => {
       const { value, id } = e.target as HTMLInputElement;
       env[id] = value;
       console.log(id, env[id]);
-      console.log(env.value);
     });
   });
-  // Create keys
+
+  // Create key elements
   const keyboard = document.querySelector(".keyboard");
   noteFreq.forEach((octave, idx) => {
     const keyList = Object.entries(octave);
@@ -89,22 +89,9 @@ async function notePressed(event) {
 }
 
 function noteReleased(event) {
-  // TODO
+  env.triggerRelease();
+  osc.stop();
 }
-
-const button = document.querySelector("#play");
-button!.addEventListener("click", async () => {
-  await Tone.start();
-  if (osc.state !== "started") {
-    osc.start();
-    env.triggerAttack();
-    button!.textContent = "Stop";
-  } else {
-    env.triggerRelease();
-    osc.stop();
-    button!.textContent = "Play";
-  }
-});
 
 function createNoteTable() {
   const noteFreq = [];
