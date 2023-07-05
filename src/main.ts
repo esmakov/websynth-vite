@@ -1,50 +1,54 @@
 import "./style.css";
 import * as Tone from "tone";
-import { createNoteTable, keyCodes } from "./utils/keycodes";
+import { createNoteTable, keyCodes } from "./utils";
 
-let env: Tone.AmplitudeEnvelope;
+let mainEnvelope: Tone.AmplitudeEnvelope;
 let osc: Tone.Oscillator;
+let mainGainNode: Tone.Gain;
+let oscList = [];
 
-const DEFAULT_VOLUME_DB = -12;
+const wavePicker = document.querySelector(
+  "#waveform-picker"
+) as HTMLSelectElement;
 
 function setup() {
-  env = new Tone.AmplitudeEnvelope({
+  mainGainNode = new Tone.Gain().toDestination();
+  mainEnvelope = new Tone.AmplitudeEnvelope({
     attack: 0.1,
     attackCurve: "exponential",
     decay: 0.2,
     sustain: 1.0,
     release: 0.8,
-  }).toDestination();
-  osc = new Tone.Oscillator("C4", "sine").connect(env);
-  osc.volume.value = DEFAULT_VOLUME_DB;
-
+  }).connect(mainGainNode);
+  osc = new Tone.Oscillator().connect(mainEnvelope);
   osc.debug = true;
-  env.debug = true;
+  mainEnvelope.debug = true;
 
   let noteFreq = createNoteTable();
 
   const volumeSlider = document.querySelector("#volume");
   volumeSlider!.addEventListener("input", (e) => {
     const { value } = e.target as HTMLInputElement;
-    const volInDecibels = Tone.gainToDb(Number(value));
-    osc.volume.value = Number(volInDecibels);
+    mainGainNode.gain.value = Number(value);
   });
 
-  const waveformPicker = document.querySelector(
-    "#waveform-picker"
-  ) as HTMLSelectElement;
-  waveformPicker.addEventListener("change", (e) => {
+  mainGainNode.gain.value = volumeSlider!.value;
+  wavePicker.addEventListener("change", (e) => {
     const { value } = e.target as HTMLSelectElement;
-    if (!(value in waveformPicker.options)) return;
+    if (!(value in wavePicker.options)) return;
     osc.type = value;
   });
+
+  for (let i = 0; i < 8; i++) {
+    oscList.push({});
+  }
 
   const envSliders = document.querySelectorAll(".envelope > input[type=range]");
   envSliders.forEach((slider) => {
     slider.addEventListener("input", (e) => {
       const { value, id } = e.target as HTMLInputElement;
-      env[id] = value;
-      console.log(id, env[id]);
+      mainEnvelope[id] = value;
+      console.log(id, mainEnvelope[id]);
     });
   });
 
@@ -86,22 +90,37 @@ function createKey(note: string, octave: number, freq: number) {
 
   return keyElement;
 }
+function playTone(freq: number) {
+  const type = wavePicker.options[wavePicker.selectedIndex]
+    .value as Tone.ToneOscillatorType;
+  const osc = new Tone.Oscillator(freq, type).connect(mainGainNode);
+  osc.start();
+  mainEnvelope.triggerAttack();
+  return osc;
+}
 
 async function notePressed(event) {
-  const note = event.target.dataset["note"];
-  const octave = event.target.dataset["octave"];
+  const dataset = event.target.dataset;
 
-  const noteName = `${note}${octave}`;
-  osc.frequency.value = noteName;
-
-  await Tone.start();
-  osc.start();
-  env.triggerAttack();
+  event.target.classList.add("active");
+  if (!dataset["pressed"]) {
+    const octave = Number(dataset["octave"]);
+    oscList[octave][dataset["note"]] = playTone(Number(dataset.frequency));
+    dataset["pressed"] = "yes";
+  }
 }
 
 function noteReleased(event) {
-  env.triggerRelease();
-  osc.stop();
+  const dataset = event.target.dataset;
+
+  if (dataset && dataset["pressed"]) {
+    const octave = Number(dataset["octave"]);
+    oscList[octave][dataset["note"]].stop();
+    delete oscList[octave][dataset["note"]];
+    delete dataset["pressed"];
+    event.target.classList.remove("active");
+    mainEnvelope.triggerRelease();
+  }
 }
 
 function keyPressed(event) {
@@ -110,10 +129,8 @@ function keyPressed(event) {
 
   if (keyElement) {
     if (event.type === "keydown") {
-      keyElement.classList.add("active");
       notePressed({ target: keyElement });
     } else if (event.type === "keyup") {
-      keyElement.classList.remove("active");
       noteReleased({ target: keyElement });
     }
     event.preventDefault();
