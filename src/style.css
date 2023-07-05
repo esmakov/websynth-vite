@@ -1,3 +1,8 @@
+#app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 .settings {
   display: flex;
   flex-direction: column;
@@ -31,8 +36,6 @@ input[type="range"] {
 .octave {
   display: flex;
 }
-#app {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.active {
+  background: hsl(160, 30%, 50%);
 }
