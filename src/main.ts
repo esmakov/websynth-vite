@@ -4,6 +4,8 @@ import * as Tone from "tone";
 let env: Tone.AmplitudeEnvelope;
 let osc: Tone.Oscillator;
 
+const DEFAULT_VOLUME_DB = -12;
+
 function setup() {
   env = new Tone.AmplitudeEnvelope({
     attack: 0.1,
@@ -13,6 +15,7 @@ function setup() {
     release: 0.8,
   }).toDestination();
   osc = new Tone.Oscillator("C4", "sine").connect(env);
+  osc.volume.value = DEFAULT_VOLUME_DB;
 
   osc.debug = true;
   env.debug = true;
@@ -28,7 +31,8 @@ function setup() {
 
   const waveformPicker = document.querySelector("#waveform-picker");
   waveformPicker!.addEventListener("change", (e) => {
-    osc.type = e.target!.value;
+    const { value } = e.target as HTMLSelectElement;
+    osc.type = value;
   });
 
   const envSliders = document.querySelectorAll(".envelope > input[type=range]");
@@ -50,7 +54,7 @@ function setup() {
     keyList.forEach(([note, frequency]) => {
       if (note.length === 1) {
         // only natural notes
-        octaveElem.appendChild(createKey(note, idx, frequency));
+        octaveElem.appendChild(createKey(note, idx, frequency as number));
       }
     });
 
@@ -62,9 +66,9 @@ function createKey(note: string, octave: number, freq: number) {
   const keyElement = document.createElement("div");
 
   keyElement.className = "key";
-  keyElement.dataset["octave"] = octave;
+  keyElement.dataset["octave"] = octave.toString();
   keyElement.dataset["note"] = note;
-  keyElement.dataset["frequency"] = freq;
+  keyElement.dataset["frequency"] = freq.toString();
 
   keyElement.innerHTML = `${note}<sub>${octave}</sub>`;
 
@@ -94,10 +98,7 @@ function noteReleased(event) {
 }
 
 function createNoteTable() {
-  const noteFreq = [];
-  for (let i = 0; i < 9; i++) {
-    noteFreq[i] = [];
-  }
+  const noteFreq = new Array(9).fill({});
 
   noteFreq[0]["A"] = 27.5;
   noteFreq[0]["A#"] = 29.135235094880619;
