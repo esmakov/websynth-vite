@@ -1,7 +1,6 @@
 import "./style.css";
 import * as Tone from "tone";
 
-//create a synth and connect it to the main output (your speakers)
 const env = new Tone.AmplitudeEnvelope({
   attack: 0.1,
   attackCurve: "exponential",
@@ -11,8 +10,8 @@ const env = new Tone.AmplitudeEnvelope({
 }).toDestination();
 const osc = new Tone.Oscillator("C4", "sine").connect(env);
 osc.debug = true;
+env.debug = true;
 
-//play a middle 'C' for the duration of an 8th note
 const button = document.querySelector("#play");
 button!.addEventListener("click", async () => {
   await Tone.start();
@@ -29,11 +28,18 @@ button!.addEventListener("click", async () => {
 
 const waveformPicker = document.querySelector("#waveform-picker");
 waveformPicker!.addEventListener("change", (e) => {
-  osc.type = e.target.value;
+  osc.type = e.target!.value;
 });
 
-const sliders = document.querySelectorAll("input[type=range]");
-sliders.forEach((slider) => {
+const volumeSlider = document.querySelector("#volume");
+volumeSlider!.addEventListener("input", (e) => {
+  const { value } = e.target as HTMLInputElement;
+  const volInDecibels = Tone.gainToDb(Number(value));
+  osc.volume.value = Number(volInDecibels);
+});
+
+const envSliders = document.querySelectorAll(".settings > input[type=range]");
+envSliders.forEach((slider) => {
   slider.addEventListener("input", (e) => {
     const { value, id } = e.target as HTMLInputElement;
     env[id] = value;
