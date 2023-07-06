@@ -75,8 +75,8 @@ function createKey(note: string, octave: number, freq: number) {
   const keyElement = document.createElement("div");
 
   keyElement.className = "key";
-  keyElement.dataset["octave"] = octave.toString();
   keyElement.dataset["note"] = note;
+  keyElement.dataset["octave"] = octave.toString();
   keyElement.dataset["frequency"] = freq.toString();
 
   keyElement.innerHTML = `${note}<sub>${octave}</sub>`;
@@ -119,7 +119,8 @@ async function notePressed(event) {
   event.target.classList.add("active");
   if (!dataset["pressed"]) {
     const octave = Number(dataset["octave"]);
-    oscList[octave][dataset["note"]] = playTone(Number(dataset.frequency));
+    const note = dataset["note"];
+    oscList[octave][note] = playTone(Number(dataset.frequency));
     dataset["pressed"] = "yes";
   }
 }
@@ -129,8 +130,9 @@ function noteReleased(event) {
 
   if (dataset && dataset["pressed"]) {
     const octave = Number(dataset["octave"]);
-    oscList[octave][dataset["note"]].stop();
-    delete oscList[octave][dataset["note"]];
+    const note = dataset["note"];
+    oscList[octave][note].stop();
+    delete oscList[octave][note];
     delete dataset["pressed"];
     event.target.classList.remove("active");
     mainEnvelope.triggerRelease();

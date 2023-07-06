@@ -54,7 +54,10 @@ export const keyCodes = [
 ];
 
 export function createNoteTable() {
-  const noteFreq = new Array(9).fill({});
+  const noteFreq = [];
+  for (let i = 0; i < 9; i++) {
+    noteFreq[i] = [];
+  }
 
   noteFreq[0]["A"] = 27.5;
   noteFreq[0]["A#"] = 29.135235094880619;
