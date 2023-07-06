@@ -2,57 +2,45 @@ import "./style.css";
 import * as Tone from "tone";
 import { createNoteTable, keyCodes } from "./utils";
 
-let mainEnvelope: Tone.AmplitudeEnvelope;
-let osc: Tone.Oscillator;
-let mainGainNode: Tone.Gain;
+let mainGainNode = new Tone.Gain(0.1).toDestination();
+let mainEnvelope = new Tone.AmplitudeEnvelope({
+  attack: 0.1,
+  attackCurve: "exponential",
+  decay: 0.2,
+  sustain: 1.0,
+  release: 0.8,
+}).connect(mainGainNode);
+
 let oscList: object[] = [];
+for (let i = 0; i < 9; i++) {
+  oscList.push({});
+}
 
 const wavePicker = document.querySelector(
   "#waveform-picker"
 ) as HTMLSelectElement;
 
-function setup() {
-  mainGainNode = new Tone.Gain().toDestination();
-  mainEnvelope = new Tone.AmplitudeEnvelope({
-    attack: 0.1,
-    attackCurve: "exponential",
-    decay: 0.2,
-    sustain: 1.0,
-    release: 0.8,
-  }).connect(mainGainNode);
+const volumeSlider = document.querySelector("#volume");
+volumeSlider!.addEventListener("input", (e) => {
+  const { value } = e.target as HTMLInputElement;
+  mainGainNode.gain.value = Number(value);
+});
 
-  let noteFreq = createNoteTable();
-
-  const volumeSlider = document.querySelector("#volume");
-  volumeSlider!.addEventListener("input", (e) => {
-    const { value } = e.target as HTMLInputElement;
-    mainGainNode.gain.value = Number(value);
+const envSliders = document.querySelectorAll(".envelope > input[type=range]");
+envSliders.forEach((slider) => {
+  slider.addEventListener("input", (e) => {
+    const { value, id } = e.target as HTMLInputElement;
+    mainEnvelope[id] = value;
+    console.log(id, mainEnvelope[id]);
   });
+});
 
-  mainGainNode.gain.value = volumeSlider!.value;
+setupKeys();
 
-  wavePicker.addEventListener("change", (e) => {
-    const { value } = e.target as HTMLSelectElement;
-    if (!(value in wavePicker.options)) return;
-    osc.type = value as Tone.ToneOscillatorType;
-  });
-
-  for (let i = 0; i < 9; i++) {
-    oscList.push({});
-  }
-
-  const envSliders = document.querySelectorAll(".envelope > input[type=range]");
-  envSliders.forEach((slider) => {
-    slider.addEventListener("input", (e) => {
-      const { value, id } = e.target as HTMLInputElement;
-      mainEnvelope[id] = value;
-      console.log(id, mainEnvelope[id]);
-    });
-  });
-
-  // Create key elements
+function setupKeys() {
   const keyboard = document.querySelector(".keyboard");
-  noteFreq.forEach((octave, idx) => {
+  let noteTable = createNoteTable();
+  noteTable.forEach((octave, idx) => {
     const keyList = Object.entries(octave);
     const octaveElem = document.createElement("div");
     octaveElem.className = "octave";
@@ -60,18 +48,19 @@ function setup() {
     keyList.forEach(([note, frequency]) => {
       // only natural notes
       if (note.length === 1) {
-        octaveElem.appendChild(createKey(note, idx, frequency as number));
+        octaveElem.appendChild(
+          createKeyElement(note, idx, frequency as number)
+        );
       }
     });
 
     keyboard!.appendChild(octaveElem);
   });
-
-  addEventListener("keydown", keyPressed);
-  addEventListener("keyup", keyPressed);
+  addEventListener("keydown", onKeyPress);
+  addEventListener("keyup", onKeyPress);
 }
 
-function createKey(note: string, octave: number, freq: number) {
+function createKeyElement(note: string, octave: number, freq: number) {
   const keyElement = document.createElement("div");
 
   keyElement.className = "key";
@@ -81,51 +70,42 @@ function createKey(note: string, octave: number, freq: number) {
 
   keyElement.innerHTML = `${note}<sub>${octave}</sub>`;
 
-  keyElement.addEventListener("mousedown", notePressed, false);
-  keyElement.addEventListener("mouseup", noteReleased, false);
-  keyElement.addEventListener("mouseover", notePressed, false);
-  keyElement.addEventListener("mouseleave", noteReleased, false);
+  keyElement.addEventListener("mousedown", handleSynthNotePress, false);
+  keyElement.addEventListener("mouseup", handleSynthNoteRelease, false);
+  keyElement.addEventListener("mouseover", handleSynthNotePress, false);
+  keyElement.addEventListener("mouseleave", handleSynthNoteRelease, false);
 
   return keyElement;
 }
 
-function playTone(freq: number) {
-  const type = wavePicker.options[wavePicker.selectedIndex]
-    .value as Tone.ToneOscillatorType;
-  const osc = new Tone.Oscillator(freq, type).connect(mainGainNode);
-  osc.start();
-  mainEnvelope.triggerAttack();
-  return osc;
-}
-
-function keyPressed(event) {
+function onKeyPress(event) {
   const synthKeys = document.querySelectorAll(".key");
   const keyElement = synthKeys[keyCodes.indexOf(event.code)];
 
   if (keyElement) {
     if (event.type === "keydown") {
-      notePressed({ buttons: 1, target: keyElement });
+      handleSynthNotePress({ buttons: 1, target: keyElement });
     } else if (event.type === "keyup") {
-      noteReleased({ target: keyElement });
+      handleSynthNoteRelease({ target: keyElement });
     }
     event.preventDefault();
   }
 }
 
-async function notePressed(event) {
+async function handleSynthNotePress(event) {
   if (!event.buttons) return;
   const dataset = event.target.dataset;
 
-  event.target.classList.add("active");
   if (!dataset["pressed"]) {
     const octave = Number(dataset["octave"]);
     const note = dataset["note"];
-    oscList[octave][note] = playTone(Number(dataset.frequency));
+    oscList[octave][note] = playNote(Number(dataset.frequency));
     dataset["pressed"] = "yes";
+    event.target.classList.add("active");
   }
 }
 
-function noteReleased(event) {
+function handleSynthNoteRelease(event) {
   const dataset = event.target.dataset;
 
   if (dataset && dataset["pressed"]) {
@@ -139,4 +119,11 @@ function noteReleased(event) {
   }
 }
 
-setup();
+function playNote(freq: number) {
+  const type = wavePicker.options[wavePicker.selectedIndex]
+    .value as Tone.ToneOscillatorType;
+  const osc = new Tone.Oscillator(freq, type).connect(mainGainNode);
+  osc.start();
+  mainEnvelope.triggerAttack();
+  return osc;
+}
