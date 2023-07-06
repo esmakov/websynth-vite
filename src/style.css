@@ -32,9 +32,31 @@ input[type="range"] {
 .keyboard {
   display: flex;
   gap: 1rem;
+  max-width: 70%;
+  overflow-x: scroll;
+  padding: 1rem;
+  outline: 2px solid hsl(160, 30%, 30%);
+  border-radius: 7px;
+}
+
+.key {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 8rem;
+  background: hsl(160, 30%, 90%);
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.spacer {
+  height: 2rem;
 }
 .octave {
   display: flex;
+  gap: 5px;
 }
 .active {
   background: hsl(160, 30%, 95%);

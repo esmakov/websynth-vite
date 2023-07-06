@@ -88,6 +88,7 @@ function createKey(note: string, octave: number, freq: number) {
 
   return keyElement;
 }
+
 function playTone(freq: number) {
   const type = wavePicker.options[wavePicker.selectedIndex]
     .value as Tone.ToneOscillatorType;
@@ -103,14 +104,16 @@ function keyPressed(event) {
 
   if (keyElement) {
     if (event.type === "keydown") {
-      notePressed({ target: keyElement });
+      notePressed({ buttons: 1, target: keyElement });
     } else if (event.type === "keyup") {
       noteReleased({ target: keyElement });
     }
     event.preventDefault();
   }
 }
+
 async function notePressed(event) {
+  if (!event.buttons) return;
   const dataset = event.target.dataset;
 
   event.target.classList.add("active");
