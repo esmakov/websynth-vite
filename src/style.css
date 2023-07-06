@@ -1,3 +1,6 @@
+body {
+  background-color: hsl(160, 30%, 60%);
+}
 #app {
   display: flex;
   flex-direction: column;
@@ -15,18 +18,15 @@ input[type="range"] {
   -webkit-appearance: none;
   width: 100%;
   height: 1rem;
-  background: hsl(140, 30%, 70%);
+  background: hsl(160, 30%, 90%);
   outline: none;
-  opacity: 0.7;
-  -webkit-transition: 0.2s;
-  transition: opacity 0.2s;
   border-radius: 1rem;
 }
 
 #waveform-picker {
   width: 100%;
   height: 100%;
-  background: hsl(160, 30%, 70%);
+  background: hsl(160, 30%, 90%);
   border-radius: 1rem;
 }
 .keyboard {
@@ -37,5 +37,5 @@ input[type="range"] {
   display: flex;
 }
 .active {
-  background: hsl(160, 30%, 50%);
+  background: hsl(160, 30%, 95%);
 }

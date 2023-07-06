@@ -5,7 +5,7 @@ import { createNoteTable, keyCodes } from "./utils";
 let mainEnvelope: Tone.AmplitudeEnvelope;
 let osc: Tone.Oscillator;
 let mainGainNode: Tone.Gain;
-let oscList = [];
+let oscList: object[] = [];
 
 const wavePicker = document.querySelector(
   "#waveform-picker"
@@ -20,9 +20,6 @@ function setup() {
     sustain: 1.0,
     release: 0.8,
   }).connect(mainGainNode);
-  osc = new Tone.Oscillator().connect(mainEnvelope);
-  osc.debug = true;
-  mainEnvelope.debug = true;
 
   let noteFreq = createNoteTable();
 
@@ -33,13 +30,14 @@ function setup() {
   });
 
   mainGainNode.gain.value = volumeSlider!.value;
+
   wavePicker.addEventListener("change", (e) => {
     const { value } = e.target as HTMLSelectElement;
     if (!(value in wavePicker.options)) return;
-    osc.type = value;
+    osc.type = value as Tone.ToneOscillatorType;
   });
 
-  for (let i = 0; i < 8; i++) {
+  for (let i = 0; i < 9; i++) {
     oscList.push({});
   }
 
@@ -99,6 +97,19 @@ function playTone(freq: number) {
   return osc;
 }
 
+function keyPressed(event) {
+  const synthKeys = document.querySelectorAll(".key");
+  const keyElement = synthKeys[keyCodes.indexOf(event.code)];
+
+  if (keyElement) {
+    if (event.type === "keydown") {
+      notePressed({ target: keyElement });
+    } else if (event.type === "keyup") {
+      noteReleased({ target: keyElement });
+    }
+    event.preventDefault();
+  }
+}
 async function notePressed(event) {
   const dataset = event.target.dataset;
 
@@ -120,20 +131,6 @@ function noteReleased(event) {
     delete dataset["pressed"];
     event.target.classList.remove("active");
     mainEnvelope.triggerRelease();
-  }
-}
-
-function keyPressed(event) {
-  const synthKeys = document.querySelectorAll(".key");
-  const keyElement = synthKeys[keyCodes.indexOf(event.code)];
-
-  if (keyElement) {
-    if (event.type === "keydown") {
-      notePressed({ target: keyElement });
-    } else if (event.type === "keyup") {
-      noteReleased({ target: keyElement });
-    }
-    event.preventDefault();
   }
 }
 
