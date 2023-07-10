@@ -10,7 +10,7 @@
     <main id="app">
       <section class="settings">
         <label for="waveform-picker">Waveform</label>
-        <select name="waveform-picker" id="waveform-picker">
+        <select id="waveform-picker">
           <option value="sine">Sine</option>
           <option value="square">Square</option>
           <option value="sawtooth">Sawtooth</option>
@@ -18,76 +18,93 @@
         </select>
 
         <label for="attackcurve-picker">Attack curve</label>
-        <select name="attackcurve-picker" id="attackcurve-picker">
-          <option value="bounce">Bounce</option>
-          <option value="cosine">Cosine</option>
+        <select id="attackcurve-picker">
           <option value="sine">Sine</option>
-          <option value="exponential">Exponential</option>
+          <option value="cosine">Cosine</option>
           <option value="linear">Linear</option>
+          <option value="exponential">Exponential</option>
           <option value="ripple">Ripple</option>
           <option value="step">Step</option>
+          <option value="bounce">Bounce</option>
         </select>
 
-        <div class="envelope">
-          <label for="attack">Attack</label>
+        <section class="envelope">
+          <div class="slider-container">
+            <label for="attack">Attack</label>
+            <input
+              type="range"
+              id="attack"
+              min="0"
+              max="2"
+              step="0.01"
+              value="1"
+            />
+            <span class="tooltip">1</span>
+          </div>
+
+          <div class="slider-container">
+            <label for="decay">Decay</label>
+            <input
+              type="range"
+              id="decay"
+              min="0.01"
+              max="2"
+              step="0.01"
+              value="1"
+            />
+            <span class="tooltip">1</span>
+          </div>
+
+          <div class="slider-container">
+            <label for="sustain">Sustain</label>
+            <input
+              type="range"
+              id="sustain"
+              min="0"
+              max="1"
+              step="0.01"
+              value="0.5"
+            />
+            <span class="tooltip">0.5</span>
+          </div>
+
+          <div class="slider-container">
+            <label for="release">Release</label>
+            <input
+              type="range"
+              id="release"
+              min="0.01"
+              max="5"
+              step="0.01"
+              value="2.5"
+            />
+            <span class="tooltip">2.5</span>
+          </div>
+        </section>
+
+        <div class="slider-container">
+          <label for="volume">Volume</label>
           <input
             type="range"
-            id="attack"
-            name="attack"
+            id="volume"
             min="0"
-            max="2"
+            max="0.5"
             step="0.01"
+            value="0.25"
+            list="volumes"
           />
-
-          <label for="decay">Decay</label>
-          <input
-            type="range"
-            id="decay"
-            name="decay"
-            min="0.01"
-            max="2"
-            step="0.01"
-          />
-
-          <label for="sustain">Sustain</label>
-          <input
-            type="range"
-            id="sustain"
-            name="sustain"
-            min="0"
-            max="1"
-            step="0.01"
-          />
-
-          <label for="release">Release</label>
-          <input
-            type="range"
-            id="release"
-            name="release"
-            min="0.01"
-            max="5"
-            step="0.01"
-          />
+          <span class="tooltip">0.25</span>
+          <datalist id="volumes">
+            <option value="0.0" label="Mute"></option>
+            <option value="1.0" label="100%"></option>
+          </datalist>
         </div>
-
-        <label for="volume">Volume</label>
-        <input
-          type="range"
-          id="volume"
-          name="volume"
-          min="0"
-          max="0.5"
-          step="0.01"
-          value="0.25"
-          list="volumes"
-          name="volume"
-        />
-        <datalist id="volumes">
-          <option value="0.0" label="Mute"></option>
-          <option value="1.0" label="100%"></option>
-        </datalist>
+        <div class="slider-container">
+          <label for="filter"> Filter cutoff </label>
+          <input type="range" id="filter" min="0" max="22000" value="22000" />
+          <span class="tooltip">22000</span>
+        </div>
       </section>
-      <div class="spacer"></div>
       <section class="keyboard">
         <div class="keyboard-controls">
           <button id="octIncrement">Oct +</button>

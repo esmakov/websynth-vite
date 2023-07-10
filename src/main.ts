@@ -3,10 +3,12 @@ import * as Tone from "tone";
 import { createNoteTable, reducedKeyCodes } from "./utils";
 
 let mainGainNode = new Tone.Gain(0.1).toDestination();
+let mainFilterNode = new Tone.Filter(22000, "lowpass").connect(mainGainNode);
 
 let oscList = new Array(9).fill({});
 let envList = new Array(9).fill({});
 
+const keyAreaElem = document.querySelector(".keyarea");
 const wavePicker = document.querySelector(
   "#waveform-picker"
 ) as HTMLSelectElement;
@@ -15,6 +17,45 @@ const volumeSlider = document.querySelector("#volume");
 volumeSlider!.addEventListener("input", (e) => {
   const { value } = e.target as HTMLInputElement;
   mainGainNode.gain.value = Number(value);
+});
+
+const filterSlider = document.querySelector("#filter");
+filterSlider!.addEventListener("input", (e) => {
+  const { value } = e.target as HTMLInputElement;
+  mainFilterNode.frequency.value = Number(value);
+});
+
+const allSliders = document.querySelectorAll("input[type=range]");
+let isMouseDown = false;
+allSliders.forEach((slider) => {
+  slider.addEventListener("input", (e) => {
+    const tooltipElem = slider.nextElementSibling;
+    const { value } = e.target as HTMLInputElement;
+    tooltipElem.innerHTML = value;
+  });
+
+  slider.addEventListener("mousedown", function () {
+    isMouseDown = true;
+  });
+
+  slider.addEventListener("mouseup", function () {
+    isMouseDown = false;
+  });
+
+  slider.addEventListener("mousemove", function (event) {
+    if (isMouseDown) {
+      const tooltipElem = slider.nextElementSibling;
+      const tooltipWidth = tooltipElem!.offsetWidth;
+      const containerWidth = slider.parentElement.offsetWidth;
+      const xPos = event.offsetX;
+      const tooltipXPos = Math.max(
+        0,
+        Math.min(containerWidth - tooltipWidth, xPos - tooltipWidth / 2)
+      );
+
+      tooltipElem.style.left = `${tooltipXPos}px`;
+    }
+  });
 });
 
 const STARTING_OCTAVE = 4;
@@ -31,7 +72,6 @@ octDecrementButton!.addEventListener("click", () => {
 });
 
 function setKeyboardOctave(octaveIdx: number) {
-  const keyAreaElem = document.querySelector(".keyarea");
   const octaveElem = document.querySelector(".octave");
   if (octaveElem) {
     keyAreaElem!.removeChild(octaveElem);
@@ -42,7 +82,6 @@ function setKeyboardOctave(octaveIdx: number) {
 function addKeysToKeyboard(octaveIdx: number) {
   const octaveElem = document.createElement("div");
   octaveElem.className = "octave";
-  const keyAreaElem = document.querySelector(".keyarea");
   keyAreaElem!.appendChild(octaveElem);
 
   let noteTable = createNoteTable();
@@ -80,10 +119,8 @@ function onKeyPress(event) {
 
   if (keyElement) {
     if (event.type === "keydown") {
-      console.log("read key as keydown");
       handleSynthNotePress({ buttons: 1, target: keyElement });
     } else if (event.type === "keyup") {
-      console.log("read key as keyup");
       handleSynthNoteRelease({ target: keyElement });
     }
     event.preventDefault();
@@ -93,7 +130,6 @@ function onKeyPress(event) {
 function handleSynthNotePress(event) {
   if (!event.buttons) return;
   const dataset = event.target.dataset;
-  console.log("press event triggered", dataset["note"]);
 
   if (!dataset["pressed"]) {
     const octave = Number(dataset["octave"]);
@@ -108,7 +144,6 @@ function handleSynthNotePress(event) {
 
 function handleSynthNoteRelease(event) {
   const dataset = event.target.dataset;
-  console.log("release trigger", dataset["note"]);
   if (dataset && dataset["pressed"]) {
     const octave = Number(dataset["octave"]);
     const note = dataset["note"];
@@ -121,7 +156,9 @@ function handleSynthNoteRelease(event) {
 }
 
 function playNote(freq: number) {
-  const envSliders = document.querySelectorAll(".envelope > input[type=range]");
+  const envSliders = document.querySelectorAll(
+    ".envelope > .slider-container > input[type=range]"
+  );
   const envOptionKeys = ["attack", "decay", "sustain", "release"];
   const envOptionValues = Array.from(envSliders).map((slider) => slider.value);
   const envOptionsObj = envOptionKeys.reduce((acc, element, index) => {
@@ -140,7 +177,7 @@ function playNote(freq: number) {
   let env = new Tone.AmplitudeEnvelope({
     attackCurve: attackCurveType,
     ...envOptionsObj,
-  }).connect(mainGainNode);
+  }).connect(mainFilterNode);
 
   const type = wavePicker.options[wavePicker.selectedIndex]
     .value as Tone.ToneOscillatorType;
