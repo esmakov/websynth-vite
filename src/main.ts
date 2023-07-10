@@ -36,7 +36,9 @@ envSliders.forEach((slider) => {
 });
 
 const keyboard = document.querySelector(".keyboard");
-let currentOctave = 0;
+
+const STARTING_OCTAVE = 4;
+let currentOctave = STARTING_OCTAVE;
 setKeyboardOctave(currentOctave);
 
 const octIncrementButton = document.querySelector("#octIncrement");
@@ -49,9 +51,10 @@ octDecrementButton!.addEventListener("click", () => {
 });
 
 function setKeyboardOctave(octaveIdx: number) {
+  const keyAreaElem = document.querySelector(".keyarea");
   const octaveElem = document.querySelector(".octave");
   if (octaveElem) {
-    keyboard!.removeChild(octaveElem);
+    keyAreaElem!.removeChild(octaveElem);
   }
   addKeysToKeyboard(octaveIdx);
 }
@@ -59,7 +62,8 @@ function setKeyboardOctave(octaveIdx: number) {
 function addKeysToKeyboard(octaveIdx: number) {
   const octaveElem = document.createElement("div");
   octaveElem.className = "octave";
-  keyboard!.appendChild(octaveElem);
+  const keyAreaElem = document.querySelector(".keyarea");
+  keyAreaElem!.appendChild(octaveElem);
 
   let noteTable = createNoteTable();
   let currentOctave = noteTable[octaveIdx];
@@ -73,13 +77,12 @@ function addKeysToKeyboard(octaveIdx: number) {
 
 function createKeyElement(note: string, octave: number, freq: number) {
   const keyElement = document.createElement("div");
+  keyElement.innerHTML = `${note}<sub>${octave}</sub>`;
+  keyElement.className = note.length == 1 ? "key white" : "key black";
 
-  keyElement.className = "key";
   keyElement.dataset["note"] = note;
   keyElement.dataset["octave"] = octave.toString();
   keyElement.dataset["frequency"] = freq.toString();
-
-  keyElement.innerHTML = `${note}<sub>${octave}</sub>`;
 
   keyElement.addEventListener("mousedown", handleSynthNotePress, false);
   keyElement.addEventListener("mouseup", handleSynthNoteRelease, false);
