@@ -121,24 +121,29 @@ function handleSynthNoteRelease(event) {
 }
 
 function playNote(freq: number) {
-  const type = wavePicker.options[wavePicker.selectedIndex]
-    .value as Tone.ToneOscillatorType;
-
   const envSliders = document.querySelectorAll(".envelope > input[type=range]");
   const envOptionKeys = ["attack", "decay", "sustain", "release"];
   const envOptionValues = Array.from(envSliders).map((slider) => slider.value);
-  let envOptionsObj = envOptionKeys.reduce((acc, element, index) => {
+  const envOptionsObj = envOptionKeys.reduce((acc, element, index) => {
     return {
       ...acc,
       [element]: envOptionValues[index],
     };
   }, {});
 
+  const attackCurvePicker = document.querySelector(
+    "#attackcurve-picker"
+  ) as HTMLSelectElement;
+  const attackCurveType =
+    attackCurvePicker.options[attackCurvePicker.selectedIndex].value;
+
   let env = new Tone.AmplitudeEnvelope({
-    attackCurve: "exponential",
+    attackCurve: attackCurveType,
     ...envOptionsObj,
   }).connect(mainGainNode);
 
+  const type = wavePicker.options[wavePicker.selectedIndex]
+    .value as Tone.ToneOscillatorType;
   const osc = new Tone.Oscillator(freq, type).connect(env);
   osc.start();
   env.triggerAttack();
