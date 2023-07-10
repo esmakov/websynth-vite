@@ -4,8 +4,8 @@ import { createNoteTable, reducedKeyCodes } from "./utils";
 
 let mainGainNode = new Tone.Gain(0.1).toDestination();
 let mainEnvelope = new Tone.AmplitudeEnvelope({
-  attack: 0.1,
   attackCurve: "exponential",
+  attack: 0.1,
   decay: 0.2,
   sustain: 1.0,
   release: 0.8,
@@ -34,8 +34,6 @@ envSliders.forEach((slider) => {
     console.log(id, mainEnvelope[id]);
   });
 });
-
-const keyboard = document.querySelector(".keyboard");
 
 const STARTING_OCTAVE = 4;
 let currentOctave = STARTING_OCTAVE;
@@ -128,18 +126,18 @@ function handleSynthNoteRelease(event) {
   if (dataset && dataset["pressed"]) {
     const octave = Number(dataset["octave"]);
     const note = dataset["note"];
+    mainEnvelope.triggerRelease();
     oscList[octave][note].stop();
     delete oscList[octave][note];
     delete dataset["pressed"];
     event.target.classList.remove("active");
-    mainEnvelope.triggerRelease();
   }
 }
 
 function playNote(freq: number) {
   const type = wavePicker.options[wavePicker.selectedIndex]
     .value as Tone.ToneOscillatorType;
-  const osc = new Tone.Oscillator(freq, type).connect(mainGainNode);
+  const osc = new Tone.Oscillator(freq, type).connect(mainEnvelope);
   osc.start();
   mainEnvelope.triggerAttack();
   return osc;
