@@ -93,11 +93,13 @@ function createKeyElement(note: string, octave: number, freq: number) {
 addEventListener("keydown", onKeyPress);
 addEventListener("keyup", onKeyPress);
 function onKeyPress(event) {
+  console.log("read key");
   const synthKeys = document.querySelectorAll(".key");
   const keyElement = synthKeys[reducedKeyCodes.indexOf(event.code)];
 
   if (keyElement) {
     if (event.type === "keydown") {
+      console.log("triggered");
       handleSynthNotePress({ buttons: 1, target: keyElement });
     } else if (event.type === "keyup") {
       handleSynthNoteRelease({ target: keyElement });
@@ -106,8 +108,8 @@ function onKeyPress(event) {
   }
 }
 
-async function handleSynthNotePress(event) {
-  await Tone.start();
+function handleSynthNotePress(event) {
+  console.log("press event triggered");
   if (!event.buttons) return;
   const dataset = event.target.dataset;
 
@@ -122,13 +124,13 @@ async function handleSynthNotePress(event) {
 
 function handleSynthNoteRelease(event) {
   const dataset = event.target.dataset;
-
+  console.log("release trigger");
   if (dataset && dataset["pressed"]) {
     const octave = Number(dataset["octave"]);
     const note = dataset["note"];
     mainEnvelope.triggerRelease();
     oscList[octave][note].stop();
-    delete oscList[octave][note];
+    // delete oscList[octave][note];
     delete dataset["pressed"];
     event.target.classList.remove("active");
   }
