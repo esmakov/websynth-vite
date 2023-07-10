@@ -1,6 +1,6 @@
 import "./style.css";
 import * as Tone from "tone";
-import { createNoteTable, keyCodes } from "./utils";
+import { createNoteTable, reducedKeyCodes } from "./utils";
 
 let mainGainNode = new Tone.Gain(0.1).toDestination();
 let mainEnvelope = new Tone.AmplitudeEnvelope({
@@ -35,29 +35,40 @@ envSliders.forEach((slider) => {
   });
 });
 
-setupKeys();
+const keyboard = document.querySelector(".keyboard");
+let currentOctave = 0;
+setKeyboardOctave(currentOctave);
 
-function setupKeys() {
-  const keyboard = document.querySelector(".keyboard");
+const octIncrementButton = document.querySelector("#octIncrement");
+const octDecrementButton = document.querySelector("#octDecrement");
+octIncrementButton!.addEventListener("click", () => {
+  if (currentOctave !== 8) setKeyboardOctave(++currentOctave);
+});
+octDecrementButton!.addEventListener("click", () => {
+  if (currentOctave !== 0) setKeyboardOctave(--currentOctave);
+});
+
+function setKeyboardOctave(octaveIdx: number) {
+  const octaveElem = document.querySelector(".octave");
+  if (octaveElem) {
+    keyboard!.removeChild(octaveElem);
+  }
+  addKeysToKeyboard(octaveIdx);
+}
+
+function addKeysToKeyboard(octaveIdx: number) {
+  const octaveElem = document.createElement("div");
+  octaveElem.className = "octave";
+  keyboard!.appendChild(octaveElem);
+
   let noteTable = createNoteTable();
-  noteTable.forEach((octave, idx) => {
-    const keyList = Object.entries(octave);
-    const octaveElem = document.createElement("div");
-    octaveElem.className = "octave";
-
-    keyList.forEach(([note, frequency]) => {
-      // only natural notes
-      if (note.length === 1) {
-        octaveElem.appendChild(
-          createKeyElement(note, idx, frequency as number)
-        );
-      }
-    });
-
-    keyboard!.appendChild(octaveElem);
+  let currentOctave = noteTable[octaveIdx];
+  const noteFreqPairs = Object.entries(currentOctave);
+  noteFreqPairs.forEach(([note, frequency]) => {
+    octaveElem.appendChild(
+      createKeyElement(note, octaveIdx, frequency as number)
+    );
   });
-  addEventListener("keydown", onKeyPress);
-  addEventListener("keyup", onKeyPress);
 }
 
 function createKeyElement(note: string, octave: number, freq: number) {
@@ -78,9 +89,11 @@ function createKeyElement(note: string, octave: number, freq: number) {
   return keyElement;
 }
 
+addEventListener("keydown", onKeyPress);
+addEventListener("keyup", onKeyPress);
 function onKeyPress(event) {
   const synthKeys = document.querySelectorAll(".key");
-  const keyElement = synthKeys[keyCodes.indexOf(event.code)];
+  const keyElement = synthKeys[reducedKeyCodes.indexOf(event.code)];
 
   if (keyElement) {
     if (event.type === "keydown") {
@@ -93,6 +106,7 @@ function onKeyPress(event) {
 }
 
 async function handleSynthNotePress(event) {
+  await Tone.start();
   if (!event.buttons) return;
   const dataset = event.target.dataset;
 
