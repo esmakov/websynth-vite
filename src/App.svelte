@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 import "./app.css";
 import * as Tone from "tone";
 import { createNoteTable, reducedKeyCodes } from "./utils";
@@ -12,17 +12,17 @@ let envList = new Array(9).fill({});
 const keyAreaElem = document.querySelector(".keyarea");
 const wavePicker = document.querySelector(
   "#waveform-picker"
-);
+) as HTMLSelectElement;
 
 const volumeSlider = document.querySelector("#volume");
-volumeSlider.addEventListener("input", (e) => {
-  const { value } = e.target ;
+volumeSlider!.addEventListener("input", (e) => {
+  const { value } = e.target as HTMLInputElement;
   mainGainNode.gain.value = Number(value);
 });
 
 const filterSlider = document.querySelector("#filter");
-filterSlider.addEventListener("input", (e) => {
-  const { value } = e.target ;
+filterSlider!.addEventListener("input", (e) => {
+  const { value } = e.target as HTMLInputElement;
   mainFilterNode.frequency.value = Number(value);
 });
 
@@ -31,7 +31,7 @@ let isMouseDown = false;
 allSliders.forEach((slider) => {
   slider.addEventListener("input", (e) => {
     const tooltipElem = slider.nextElementSibling;
-    const { value } = e.target ;
+    const { value } = e.target as HTMLInputElement;
     tooltipElem.innerHTML = value;
   });
 
@@ -65,25 +65,25 @@ setKeyboardOctave(currentOctave);
 
 const octIncrementButton = document.querySelector("#octIncrement");
 const octDecrementButton = document.querySelector("#octDecrement");
-octIncrementButton.addEventListener("click", () => {
+octIncrementButton!.addEventListener("click", () => {
   if (currentOctave !== 8) setKeyboardOctave(++currentOctave);
 });
-octDecrementButton.addEventListener("click", () => {
+octDecrementButton!.addEventListener("click", () => {
   if (currentOctave !== 0) setKeyboardOctave(--currentOctave);
 });
 
-function setKeyboardOctave(octaveIdx) {
+function setKeyboardOctave(octaveIdx: number) {
   const octaveElem = document.querySelector(".octave");
   if (octaveElem) {
-    keyAreaElem.removeChild(octaveElem);
+    keyAreaElem!.removeChild(octaveElem);
   }
   addKeysToKeyboard(octaveIdx);
 }
 
-function addKeysToKeyboard(octaveIdx) {
+function addKeysToKeyboard(octaveIdx: number) {
   const octaveElem = document.createElement("div");
   octaveElem.className = "octave";
-  keyAreaElem.appendChild(octaveElem);
+  keyAreaElem!.appendChild(octaveElem);
 
   let noteTable = createNoteTable();
   let currentOctave = noteTable[octaveIdx];
@@ -95,7 +95,7 @@ function addKeysToKeyboard(octaveIdx) {
   });
 }
 
-function createKeyElement(note, octave, freq) {
+function createKeyElement(note: string, octave: number, freq: number) {
   const keyElement = document.createElement("div");
   keyElement.innerHTML = `${note}<sub>${octave}</sub>`;
   keyElement.className = note.length == 1 ? "key white" : "key black";
@@ -114,7 +114,7 @@ function createKeyElement(note, octave, freq) {
 
 addEventListener("keydown", onKeyPress);
 addEventListener("keyup", onKeyPress);
-function onKeyPress(event) {
+function onKeyPress(event: KeyboardEvent) {
   const synthKeys = document.querySelectorAll(".key");
   const keyElement = synthKeys[reducedKeyCodes.indexOf(event.code)];
 
@@ -156,10 +156,10 @@ function handleSynthNoteRelease(event) {
   }
 }
 
-function playNote(freq) {
+function playNote(freq: number) {
   const envSliders = document.querySelectorAll(
     ".envelope > .slider-container > input[type=range]"
-  );
+  ) as NodeListOf<HTMLInputElement>;
   const envOptionKeys = ["attack", "decay", "sustain", "release"];
   const envOptionValues = Array.from(envSliders).map((slider) => slider.value);
   const envOptionsObj = envOptionKeys.reduce((acc, element, index) => {
@@ -171,7 +171,7 @@ function playNote(freq) {
 
   const attackCurvePicker = document.querySelector(
     "#attackcurve-picker"
-  ) ;
+  ) as HTMLSelectElement;
   const attackCurveType =
     attackCurvePicker.options[attackCurvePicker.selectedIndex].value;
 
