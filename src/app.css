@@ -42,7 +42,6 @@ select {
 .keyboard {
   display: flex;
   gap: 1rem;
-  /* width: 500px; */
   padding: 1rem;
   outline: 2px solid hsl(160, 30%, 30%);
   border-radius: 7px;
@@ -95,7 +94,6 @@ select {
 }
 .slider-container {
   position: relative;
-  /* width: 200px; */
 }
 
 .tooltip {
@@ -107,10 +105,9 @@ select {
   padding: 5px;
   position: absolute;
   z-index: 1;
-  bottom: 125%;
+  bottom: 70%;
   left: 50%;
-  transform: translateX(-50%);
-  white-space: nowrap;
+  transform: translateX(-35%);
 }
 
 .slider-container:hover .tooltip {
