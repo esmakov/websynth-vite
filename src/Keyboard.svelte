@@ -40,7 +40,7 @@
     if (!event.buttons || dataset["pressed"]) return;
 
     const note = dataset["note"] + currentOctave;
-    mainPolySynth.triggerAttack(note, "+0.05");
+    mainPolySynth.triggerAttack(note);
     dataset["pressed"] = true;
     event.target.classList.add("active");
   }
