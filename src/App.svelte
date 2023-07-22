@@ -12,10 +12,10 @@
     sustain,
     waveform,
   } from "./stores.js";
-  import { onMount } from "svelte";
+  import { afterUpdate } from "svelte";
   import { mainPolySynth } from "./main.ts";
 
-  onMount(async () => {
+  afterUpdate(async () => {
     await Tone.start();
     mainPolySynth.connect(mainFilterNode);
     mainPolySynth.set({
@@ -30,6 +30,7 @@
         release: $release,
       },
     });
+    console.log($waveform);
   });
 
   const mainGainNode = new Tone.Gain($gain).toDestination();
