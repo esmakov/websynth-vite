@@ -15,6 +15,7 @@
   import { afterUpdate } from "svelte";
   import { mainPolySynth } from "./main.ts";
 
+  // references to the synth must be done after import resolves
   afterUpdate(async () => {
     await Tone.start();
     mainPolySynth.connect(mainFilterNode);
@@ -33,9 +34,12 @@
   });
 
   const mainGainNode = new Tone.Gain($gain).toDestination();
+  $: mainGainNode.gain.value = $gain;
+
   const mainFilterNode = new Tone.Filter($filterCutoff, "lowpass").connect(
     mainGainNode
   );
+  $: mainFilterNode.frequency.value = $filterCutoff;
 </script>
 
 <Settings />

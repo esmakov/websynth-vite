@@ -40,7 +40,7 @@
     bind:value={$decay}
     label="Decay"
     id="decay"
-    min="0"
+    min="0.01"
     max="2"
     step="0.01"
   />
@@ -48,7 +48,7 @@
     bind:value={$sustain}
     label="Sustain"
     id="sustain"
-    min="0"
+    min="0.01"
     max="1"
     step="0.01"
   />
@@ -56,7 +56,7 @@
     bind:value={$release}
     label="Release"
     id="release"
-    min="0"
+    min="0.01"
     max="5"
     step="0.01"
   />
@@ -64,7 +64,7 @@
     bind:value={$gain}
     label="Gain"
     id="gain"
-    min="0"
+    min="0.01"
     max="1"
     step="0.01"
   />
@@ -72,8 +72,8 @@
     bind:value={$filterCutoff}
     label="Filter cutoff"
     id="filter"
-    min="0"
-    max="22000"
+    min="0.01"
+    max="20000"
     step="1"
   />
 </section>

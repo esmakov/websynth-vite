@@ -24,8 +24,8 @@
   addEventListener("keyup", onKeyPress);
   function onKeyPress(event: KeyboardEvent) {
     event.preventDefault();
-    const synthKeys = document.querySelectorAll(".key");
     if (!keyCodes.includes(event.code)) return;
+    const synthKeys = document.querySelectorAll(".key");
     const target = synthKeys[keyCodes.indexOf(event.code)];
 
     if (event.type === "keydown") {
