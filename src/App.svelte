@@ -2,17 +2,40 @@
   import * as Tone from "tone";
   import Keyboard from "./Keyboard.svelte";
   import Settings from "./Settings.svelte";
-  import { gain, waveform } from "./stores.js";
+  import {
+    attack,
+    attackCurve,
+    decay,
+    filterCutoff,
+    gain,
+    release,
+    sustain,
+    waveform,
+  } from "./stores.js";
   import { onMount } from "svelte";
+  import { mainPolySynth } from "./main.ts";
 
   onMount(async () => {
     await Tone.start();
+    mainPolySynth.connect(mainFilterNode);
+    mainPolySynth.set({
+      oscillator: {
+        type: $waveform,
+      },
+      envelope: {
+        attackCurve: $attackCurve,
+        attack: $attack,
+        decay: $decay,
+        sustain: $sustain,
+        release: $release,
+      },
+    });
   });
-  let mainGainNode = new Tone.Gain($gain).toDestination();
-  let mainFilterNode = new Tone.Filter(22000, "lowpass").connect(mainGainNode);
 
-  let oscList = new Array(9).fill({});
-  let envList = new Array(9).fill({});
+  const mainGainNode = new Tone.Gain($gain).toDestination();
+  const mainFilterNode = new Tone.Filter($filterCutoff, "lowpass").connect(
+    mainGainNode
+  );
 </script>
 
 <Settings />

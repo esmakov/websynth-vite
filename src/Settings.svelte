@@ -15,14 +15,14 @@
 <section class="settings">
   <label for="waveform-picker">Waveform</label>
   <select id="waveform-picker" bind:value={$waveform}>
-    {#each ["Sine", "Square", "Sawtooth", "Triangle"] as waveOption}
+    {#each ["sine", "square", "sawtooth", "triangle"] as waveOption}
       <option value={waveOption}>{waveOption}</option>
     {/each}
   </select>
 
-  <label for="attackcurve-picker">Attack curve</label>
-  <select id="attackcurve-picker" bind:value={$attackCurve}>
-    {#each ["Sine", "Cosine", "Linear", "Exponential", "Ripple", "Step", "Bounce"] as attackCurveOption}
+  <label for="attack-curve-picker">Attack curve</label>
+  <select id="attack-curve-picker" bind:value={$attackCurve}>
+    {#each ["sine", "cosine", "linear", "exponential", "ripple", "step", "bounce"] as attackCurveOption}
       <option value={attackCurveOption}>{attackCurveOption}</option>
     {/each}
   </select>
@@ -89,7 +89,6 @@
     display: flex;
     flex-direction: column;
     width: clamp(15rem, 40vw, 20rem);
-    margin-top: 2rem;
     gap: 0.5rem;
     background-color: hsl(160, 25%, 80%);
     padding: 1rem;
