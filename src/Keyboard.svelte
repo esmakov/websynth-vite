@@ -74,7 +74,7 @@
     >
   </div>
   <div class="keyarea">
-    {#each ["C", "C#", "D", "D#", "E", "F", "G", "G#", "A", "A#", "B"] as note}
+    {#each ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"] as note}
       <button
         type="button"
         data-note={note}

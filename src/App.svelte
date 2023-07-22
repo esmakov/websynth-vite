@@ -30,7 +30,6 @@
         release: $release,
       },
     });
-    console.log($waveform);
   });
 
   const mainGainNode = new Tone.Gain($gain).toDestination();
