@@ -73,7 +73,7 @@
     appearance: none;
     width: 100%;
     height: 1rem;
-    background: hsl(160, 30%, 60%);
+    background: var(--light);
     outline: none;
     border-radius: 1rem;
     cursor: pointer;

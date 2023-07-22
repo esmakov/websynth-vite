@@ -94,10 +94,10 @@
     display: flex;
     gap: 1rem;
     padding: 1rem;
-    outline: 2px solid hsl(160, 30%, 30%);
+    outline: 2px solid var(--dark);
     border-radius: 7px;
-    background-color: hsl(160, 30%, 30%);
-    box-shadow: 8px 8px 3px hsl(160, 30%, 10%);
+    background-color: var(--dark);
+    box-shadow: 8px 8px 3px var(--shadow);
   }
 
   .keyboard-controls {
@@ -110,7 +110,7 @@
     padding: 2px;
     height: 3rem;
     border-radius: 5px;
-    background-color: hsl(160, 30%, 90%);
+    background-color: var(--highlight);
     cursor: pointer;
   }
 
@@ -119,7 +119,7 @@
     gap: 5px;
     padding: 1rem;
     border-radius: 10px;
-    box-shadow: 2px 2px 1px hsl(160, 30%, 10%);
+    box-shadow: 4px 4px 3px var(--shadow);
   }
   .key {
     display: flex;
@@ -129,10 +129,10 @@
     padding-bottom: 10px;
     width: 50px;
     height: 200px;
-    background-color: hsl(160, 30%, 90%);
+    background-color: var(--highlight);
     border-radius: 7px;
     cursor: pointer;
-    box-shadow: 5px 5px 3px hsl(160, 30%, 10%);
+    box-shadow: 5px 5px 3px var(--shadow);
   }
 
   .black {

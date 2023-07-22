@@ -80,7 +80,7 @@
 
 <style>
   select {
-    background: hsl(160, 30%, 60%);
+    background: var(--light);
     border-radius: 7px;
     height: 2rem;
     cursor: pointer;
@@ -91,9 +91,9 @@
     flex-direction: column;
     width: clamp(15rem, 40vw, 20rem);
     gap: 0.5rem;
-    background-color: hsl(160, 25%, 80%);
+    background-color: var(--midtone);
     padding: 1rem;
     border-radius: 1rem;
-    box-shadow: 5px 5px 3px hsl(160, 30%, 10%);
+    box-shadow: 5px 5px 3px var(--shadow);
   }
 </style>
