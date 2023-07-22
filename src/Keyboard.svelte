@@ -40,7 +40,7 @@
     if (!event.buttons || dataset["pressed"]) return;
 
     const note = dataset["note"] + currentOctave;
-    mainPolySynth.triggerAttack(note);
+    mainPolySynth.triggerAttack(note, "+0.05");
     dataset["pressed"] = true;
     event.target.classList.add("active");
   }
@@ -120,6 +120,7 @@
     padding: 1rem;
     border-radius: 10px;
     box-shadow: 4px 4px 3px var(--shadow);
+    background-color: hsl(160, 25%, 35%);
   }
   .key {
     display: flex;
@@ -136,8 +137,8 @@
   }
 
   .black {
-    background-color: black;
-    color: white;
+    background-color: var(--shadow);
+    color: var(--highlight);
     width: 35px;
     height: 140px;
     margin-left: -30px;

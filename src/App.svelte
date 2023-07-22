@@ -18,7 +18,8 @@
   // references to the synth must be done after import resolves
   afterUpdate(async () => {
     await Tone.start();
-    mainPolySynth.connect(mainFilterNode);
+    console.log(Tone.getContext());
+    mainPolySynth.chain(mainFilterNode, mainGainNode, Tone.Destination);
     mainPolySynth.set({
       oscillator: {
         type: $waveform,
@@ -33,12 +34,10 @@
     });
   });
 
-  const mainGainNode = new Tone.Gain($gain).toDestination();
+  const mainGainNode = new Tone.Gain($gain);
   $: mainGainNode.gain.value = $gain;
 
-  const mainFilterNode = new Tone.Filter($filterCutoff, "lowpass").connect(
-    mainGainNode
-  );
+  const mainFilterNode = new Tone.Filter($filterCutoff, "lowpass");
   $: mainFilterNode.frequency.value = $filterCutoff;
 </script>
 
