@@ -117,6 +117,9 @@
   .keyarea {
     display: flex;
     gap: 5px;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 2px 2px 1px hsl(160, 30%, 10%);
   }
   .key {
     display: flex;
@@ -139,9 +142,5 @@
     height: 140px;
     margin-left: -30px;
     z-index: 1;
-  }
-
-  .keyarea {
-    display: flexnset 2px 2px 1px hsl(160, 30%, 10%);
   }
 </style>

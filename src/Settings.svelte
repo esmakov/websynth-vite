@@ -81,7 +81,8 @@
 <style>
   select {
     background: hsl(160, 30%, 60%);
-    border-radius: 1rem;
+    border-radius: 7px;
+    height: 2rem;
     cursor: pointer;
   }
 

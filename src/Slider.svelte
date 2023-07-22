@@ -16,7 +16,7 @@
     isMouseDown = false;
   }
 
-  function onMouseMove(e) {
+  function onMouseMove(e: MouseEvent) {
     if (isMouseDown) {
       const tooltipElem = this.nextElementSibling;
       const tooltipWidth = tooltipElem.offsetWidth;
@@ -70,7 +70,7 @@
     visibility: visible;
   }
   input[type="range"] {
-    -webkit-appearance: none;
+    appearance: none;
     width: 100%;
     height: 1rem;
     background: hsl(160, 30%, 60%);
