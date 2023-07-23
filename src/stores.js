@@ -7,6 +7,8 @@ export let filterCutoff = writable(22000);
 export let waveform = writable("square");
 
 export let attackCurve = writable("linear");
+export let decayCurve = writable("linear");
+export let releaseCurve = writable("linear");
 export let attack = writable(0.01);
 export let decay = writable(0.01);
 export let sustain = writable(0.5);

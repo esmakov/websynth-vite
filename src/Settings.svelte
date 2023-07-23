@@ -1,31 +1,48 @@
 <script lang="ts">
+  import Picker from "./Picker.svelte";
   import Slider from "./Slider.svelte";
   import {
     attack,
     attackCurve,
     decay,
+    decayCurve,
     filterCutoff,
     gain,
     release,
+    releaseCurve,
     sustain,
     waveform,
   } from "./stores.js";
 </script>
 
 <section class="settings">
-  <label for="waveform-picker">Waveform</label>
-  <select id="waveform-picker" bind:value={$waveform}>
-    {#each ["sine", "square", "sawtooth", "triangle"] as waveOption}
-      <option value={waveOption}>{waveOption}</option>
-    {/each}
-  </select>
+  <Picker
+    optionList={["sine", "square", "triangle", "sawtooth"]}
+    store={waveform}
+    label="Waveform"
+    id="waveform"
+  />
 
-  <label for="attack-curve-picker">Attack curve</label>
-  <select id="attack-curve-picker" bind:value={$attackCurve}>
-    {#each ["sine", "cosine", "linear", "exponential", "ripple", "step", "bounce"] as attackCurveOption}
-      <option value={attackCurveOption}>{attackCurveOption}</option>
-    {/each}
-  </select>
+  <Picker
+    optionList={["linear", "exponential", "sine", "cosine", "bounce", "ripple"]}
+    store={attackCurve}
+    label="Attack curve"
+    id="attack-curve"
+  />
+
+  <Picker
+    optionList={["linear", "exponential"]}
+    store={decayCurve}
+    label="Decay curve"
+    id="decay-curve"
+  />
+
+  <Picker
+    optionList={["linear", "exponential", "sine", "cosine", "bounce", "ripple"]}
+    store={releaseCurve}
+    label="Release curve"
+    id="release-curve"
+  />
 
   <Slider
     bind:value={$attack}

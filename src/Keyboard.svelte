@@ -109,7 +109,8 @@
   .keyboard-controls > button {
     padding: 2px;
     height: 3rem;
-    border-radius: 5px;
+    aspect-ratio: 1/1;
+    border-radius: 7px;
     background-color: var(--highlight);
     cursor: pointer;
   }
